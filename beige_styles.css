@@ -78,7 +78,7 @@ h1, h2, h3, h4, .serif-font { font-family: var(--font-serif); color: var(--text-
 }
 .brand { display: flex; align-items: center; gap: 1rem; text-decoration: none; }
 .brand-seal {
-  width: 80px; height: 80px; border-radius: 50%;
+  width: 52px; height: 52px; border-radius: 50%;
   box-shadow: 0 4px 12px rgba(181, 137, 0, 0.18);
   border: 2px solid var(--accent-gold);
   object-fit: cover; background: #fff;
