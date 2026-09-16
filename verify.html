@@ -1,0 +1,1517 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Credential Verification — House of Strauss</title>
+  <link rel="stylesheet" href="styles.css">
+  <link href="https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@600;700&family=Courier+Prime:wght@700&family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600&family=Cinzel:wght@600;700;800&family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600&family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    .verify-container {
+      max-width: 800px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 20px;
+      padding: 3.5rem;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.05);
+      border: 1px solid #f1f5f9;
+    }
+
+    .form-group {
+      margin-bottom: 1.8rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .form-label {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 600;
+      color: var(--primary);
+      font-size: 0.95rem;
+    }
+
+    .form-control {
+      padding: 1rem 1.2rem;
+      border: 1px solid #cbd5e1;
+      border-radius: 12px;
+      font-family: 'Inter', sans-serif;
+      font-size: 1rem;
+      color: var(--text-main);
+      background-color: #f8fafc;
+      transition: var(--transition);
+      width: 100%;
+      outline: none;
+      text-transform: lowercase;
+    }
+
+    .form-control:focus {
+      border-color: var(--accent);
+      background-color: white;
+      box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.15);
+    }
+
+    .btn-verify {
+      width: 100%;
+      padding: 1rem;
+      font-size: 1.05rem;
+      letter-spacing: 0.5px;
+      margin-top: 1rem;
+    }
+
+    /* Result Styling */
+    .result-card {
+      margin-top: 3rem;
+      border-radius: 16px;
+      padding: 2.5rem;
+      display: none;
+      animation: fadeIn 0.5s ease forwards;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(15px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      border-radius: 50px;
+      font-family: 'Outfit', sans-serif;
+      font-weight: 700;
+      font-size: 0.85rem;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 1.5rem;
+    }
+
+    .badge-active {
+      background-color: #ecfdf5;
+      color: #059669;
+      border: 1px solid #a7f3d0;
+    }
+
+    .badge-notfound {
+      background-color: #fef2f2;
+      color: #dc2626;
+      border: 1px solid #fecaca;
+    }
+
+    .credential-details {
+      margin-bottom: 2rem;
+      border-top: 1px solid #e2e8f0;
+      padding-top: 1.5rem;
+    }
+
+    .detail-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 0.8rem 0;
+      border-bottom: 1px solid #f1f5f9;
+    }
+
+    .detail-row:last-child {
+      border-bottom: none;
+    }
+
+    .detail-label {
+      font-weight: 500;
+      color: var(--text-light);
+    }
+
+    .detail-value {
+      font-weight: 600;
+      color: var(--primary);
+    }
+
+    .legalization-box {
+      margin-top: 1.5rem;
+      padding: 1.2rem;
+      background: rgba(212, 175, 55, 0.06);
+      border-left: 3px solid var(--accent);
+      border-radius: 0 8px 8px 0;
+      font-size: 0.95rem;
+      color: var(--text-light);
+      line-height: 1.6;
+    }
+
+    .legalization-box strong {
+      color: var(--primary);
+    }
+
+    .card-preview-wrapper {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1rem;
+      margin-top: 2rem;
+      padding-top: 2rem;
+      border-top: 1px solid #e2e8f0;
+    }
+
+    .card-preview-wrapper img {
+      width: 100%;
+      max-width: 550px;
+      border-radius: 14px;
+      box-shadow: 0 15px 35px rgba(15, 23, 42, 0.08);
+      border: 1px solid #e2e8f0;
+      transition: transform 0.3s ease;
+    }
+
+    .card-preview-wrapper img:hover {
+      transform: scale(1.02);
+    }
+
+    .btn-action-group {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      margin-top: 1rem;
+    }
+
+    .btn-action {
+      padding: 0.6rem 2rem;
+      font-size: 0.95rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    
+    /* Screen display: hide printable certificate on web page */
+    @media screen {
+      .print-only-cert,
+      #printableCertificate {
+        display: none !important;
+        visibility: hidden !important;
+        height: 0 !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        overflow: hidden !important;
+      }
+    }
+
+    /* Print only certificate styling */
+    @page {
+      size: A4 portrait;
+      margin: 0;
+    }
+        @media print {
+      @page {
+        size: 210mm 297mm;
+        margin: 0;
+      }
+      html, body {
+        width: 210mm !important;
+        height: 297mm !important;
+        max-height: 297mm !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        background: #ffffff !important;
+        overflow: hidden !important;
+      }
+      body > *:not(#printableCertificate) {
+        display: none !important;
+      }
+      header, nav, section, footer, .navbar, .portal-section, .portal-container, #resultArea, .contrast-toggle {
+        display: none !important;
+      }
+      #printableCertificate,
+      #printableCertificate * {
+        visibility: visible !important;
+      }
+      #printableCertificate {
+        display: block !important;
+        visibility: visible !important;
+        position: fixed !important;
+        left: 0 !important;
+        top: 0 !important;
+        width: 210mm !important;
+        height: 297mm !important;
+        max-height: 297mm !important;
+        box-sizing: border-box !important;
+        background: #ffffff !important;
+        padding: 7mm 9mm 5mm 9mm !important;
+        margin: 0 !important;
+        overflow: hidden !important;
+        page-break-after: avoid !important;
+        break-after: avoid !important;
+      }
+    }
+    
+.cert-border {
+        border: 3.5px solid #0097b2 !important;
+        outline: 1px solid #0097b2 !important;
+        outline-offset: -7px !important;
+        width: 100% !important;
+        height: 100% !important;
+        max-height: 100% !important;
+        padding: 7mm 9mm 6mm 9mm !important;
+        box-sizing: border-box !important;
+        display: flex !important;
+        flex-direction: column !important;
+        justify-content: space-between !important;
+        background-color: #ffffff !important;
+        position: relative !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+      }
+      .corner-sq {
+        position: absolute;
+        width: 14px;
+        height: 14px;
+        border: 3px solid #0097b2 !important;
+        background: #ffffff !important;
+      }
+      .csq-tl { top: 9px; left: 9px; }
+      .csq-tr { top: 9px; right: 9px; }
+      .csq-bl { bottom: 9px; left: 9px; }
+      .csq-br { bottom: 9px; right: 9px; }
+
+      .cert-header {
+        text-align: center;
+        margin-bottom: 2mm;
+      }
+      .cert-seal-top {
+        height: 52px !important;
+        width: auto;
+        margin-bottom: 2mm;
+      }
+      .cert-title-main {
+        font-family: 'Cinzel', serif;
+        text-transform: uppercase;
+        font-size: 1.80rem !important;
+        letter-spacing: 4px;
+        color: #1e293b;
+        margin: 0 0 2px 0;
+        font-weight: 700;
+        line-height: 1.1;
+      }
+      .cert-title-sub {
+        font-family: 'Outfit', sans-serif;
+        font-size: 0.95rem !important;
+        color: #0097b2;
+        text-transform: uppercase;
+        letter-spacing: 2.5px;
+        margin: 0;
+        font-weight: 600;
+      }
+
+      .cert-body {
+        display: flex !important;
+        flex-direction: column !important;
+        justify-content: space-between !important;
+        align-items: center !important;
+        flex-grow: 1 !important;
+        margin: 2mm 0 !important;
+        gap: 3.5mm !important;
+      }
+      .cert-attestation-text {
+        font-family: 'Cormorant Garamond', serif;
+        font-size: 1.12rem !important;
+        line-height: 1.45;
+        text-align: justify;
+        text-align-last: center;
+        color: #1e293b;
+        font-style: italic;
+        margin: 1mm auto;
+        max-width: 95%;
+      }
+
+      .cert-meta-grid {
+        display: grid !important;
+        grid-template-columns: 1fr 1fr !important;
+        gap: 3mm !important;
+        border-top: 1px solid #cbd5e1 !important;
+        border-bottom: 1px solid #cbd5e1 !important;
+        padding: 3.5mm 0 !important;
+        max-width: 95% !important;
+        margin: 1mm auto !important;
+        width: 100% !important;
+      }
+      .cert-meta-item {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+      }
+      .cert-meta-label {
+        font-family: 'Outfit', sans-serif;
+        font-size: 0.64rem !important;
+        text-transform: uppercase;
+        color: #64748b;
+        letter-spacing: 1.2px;
+        margin-bottom: 2px;
+      }
+      .cert-meta-val {
+        font-family: 'Outfit', sans-serif;
+        font-size: 0.95rem !important;
+        font-weight: 700;
+        color: #1e293b;
+      }
+
+      .exemption-pill {
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        gap: 6px !important;
+        border: 1.5px solid #10b981 !important;
+        background: rgba(16, 185, 129, 0.06) !important;
+        color: #065f46 !important;
+        font-family: 'Outfit', sans-serif;
+        font-size: 0.76rem !important;
+        font-weight: 700;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        padding: 3px 14px !important;
+        border-radius: 4px !important;
+        margin: 1mm 0 !important;
+      }
+
+      .cert-legalization-wrapper {
+        border: 1px solid rgba(0, 151, 178, 0.3) !important;
+        background: rgba(240, 253, 250, 0.5) !important;
+        padding: 3.5mm 5.5mm !important;
+        max-width: 95% !important;
+        margin: 1mm auto !important;
+        border-radius: 6px !important;
+        box-sizing: border-box !important;
+      }
+      .cert-legalization-title {
+        font-family: 'Outfit', sans-serif;
+        font-size: 0.70rem !important;
+        color: #0097b2;
+        text-transform: uppercase;
+        letter-spacing: 1.2px;
+        margin-bottom: 2px;
+        font-weight: 700;
+        text-align: center;
+      }
+      .cert-legalization-text {
+        font-family: 'Cormorant Garamond', serif;
+        font-size: 0.86rem !important;
+        line-height: 1.38;
+        color: #334155;
+        text-align: justify;
+        text-align-last: center;
+        margin: 0;
+      }
+      .cert-legalization-text strong {
+        color: #1e293b;
+      }
+
+      .cert-id-card-section {
+        text-align: center;
+        margin: 1mm 0;
+      }
+      .cert-id-card-title {
+        font-family: 'Outfit', sans-serif;
+        font-size: 0.60rem !important;
+        text-transform: uppercase;
+        font-weight: 600;
+        color: #64748b;
+        margin-bottom: 2mm;
+        letter-spacing: 1px;
+      }
+      .cert-id-card-section img {
+        width: 3.85in !important;
+        height: 2.45in !important;
+        object-fit: fill !important;
+        border: 1.5px solid #0097b2 !important;
+        border-radius: 10px !important;
+        box-shadow: 0 4px 14px rgba(0, 151, 178, 0.12) !important;
+        display: block !important;
+        margin: 0 auto !important;
+      }
+
+      .cert-footer-master {
+        border-top: 1px solid #cbd5e1 !important;
+        padding-top: 3mm !important;
+        margin-top: 2mm !important;
+        width: 100% !important;
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 2mm !important;
+      }
+      .footer-columns-row {
+        display: flex !important;
+        justify-content: space-between !important;
+        align-items: flex-start !important;
+        width: 100% !important;
+        position: relative !important;
+      }
+      .footer-col {
+        display: flex !important;
+        flex-direction: column !important;
+      }
+      .footer-col.left {
+        text-align: left;
+      }
+      .footer-col.right {
+        text-align: right;
+      }
+      .footer-center-seal {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        height: 32px !important;
+        width: auto;
+        opacity: 0.85;
+      }
+      .footer-label {
+        font-family: 'Outfit', sans-serif;
+        font-size: 0.58rem !important;
+        text-transform: uppercase;
+        color: #64748b;
+        letter-spacing: 1px;
+        font-weight: 600;
+        margin-bottom: 2px;
+      }
+      .footer-main-val {
+        font-family: 'Outfit', sans-serif;
+        font-size: 0.78rem !important;
+        font-weight: 700;
+        color: #1e293b;
+      }
+      .footer-sub-val {
+        font-family: 'Outfit', sans-serif;
+        font-size: 0.66rem !important;
+        color: #475569;
+      }
+      .footer-sub-val strong {
+        color: #0097b2;
+      }
+      
+      .footer-crypto-bar {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 2px !important;
+        background: #f8fafc !important;
+        border: 1px solid #e2e8f0 !important;
+        border-radius: 4px !important;
+        padding: 2mm 3.5mm !important;
+        width: 100% !important;
+        box-sizing: border-box !important;
+      }
+      .crypto-row {
+        display: flex !important;
+        justify-content: space-between !important;
+        align-items: center !important;
+        width: 100% !important;
+        font-family: 'Courier Prime', 'Courier New', monospace !important;
+        font-size: 0.52rem !important;
+        line-height: 1.2 !important;
+      }
+      .crypto-tag {
+        font-weight: 700 !important;
+        color: #0097b2 !important;
+        letter-spacing: 0.5px !important;
+      }
+      .crypto-hex {
+        font-weight: 700 !important;
+        color: #0f172a !important;
+        letter-spacing: 0.2px !important;
+      }
+    }
+  </style>
+  <script src="/scripts/theme-manager.js"></script>
+</head>
+<body>
+
+    <!-- Header & Navigation -->
+  <header class="site-header">
+    <div class="header-container">
+      <a href="index.html" class="brand">
+        <img src="images/house_of_strauss_seal.jpg" alt="House of Strauss Consecrated Seal" class="brand-seal">
+        <div class="brand-text">
+          <span class="brand-name">House of Strauss</span>
+          <span class="brand-subtitle">Ecclesia & Desert Sanctuary</span>
+        </div>
+      </a>
+      <nav>
+        <ul class="nav-links">
+          <li><a href="index.html" class="nav-link">Home</a></li>
+          <li><a href="about.html" class="nav-link">About Us</a></li>
+          <li><a href="contact.html" class="nav-link">Contact Us</a></li>
+          <li><a href="credentials.html" class="nav-cta">Credentials</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero" style="min-height: 40vh; padding-top: 150px; background: linear-gradient(to bottom, rgba(255,255,255,0.75) 0%, rgba(255,255,255,0.3) 100%), url('sunrise_banner.png') center/cover no-repeat;">
+    <div class="hero-content">
+      <h1 class="headline" style="font-size: 3rem; color: #1e293b; text-shadow: none;">Credential Verification</h1>
+      <h2 class="subhead" style="color: #475569; text-shadow: none;">Verify ordination credentials and active status of Mission House ministers.</h2>
+    </div>
+  </section>
+
+  <!-- Form Section -->
+  <section class="provision" style="padding-top: 2rem; padding-bottom: 6rem;">
+    <div class="container" style="width: 100%;">
+      
+      <div class="verify-container">
+        <h3 style="font-size: 1.8rem; color: var(--primary); margin-bottom: 2rem; text-align: center;">Minister Status Registry Search</h3>
+        
+        <form id="verificationForm" onsubmit="verifyCredentials(event)">
+          <div class="form-group">
+            <label class="form-label" for="ministerName">Minister Full Name</label>
+            <input class="form-control" type="text" id="ministerName" placeholder="Enter minister name (optional if ID provided)" oninput="this.value = this.value.toLowerCase()">
+          </div>
+          
+          <div class="form-group">
+            <label class="form-label" for="idNumber">Identification / Ordination Number</label>
+            <input class="form-control" type="text" id="idNumber" placeholder="Enter identification number (e.g. 24-16616)" oninput="this.value = this.value.toLowerCase()">
+          </div>
+          
+          <button type="submit" class="btn btn-primary btn-verify">Verify Credentials</button>
+        </form>
+
+        <!-- Result Container -->
+        <div id="resultArea">
+          
+          <!-- Success State -->
+          <div id="successResult" class="result-card" style="background-color: #fafbfd; border: 1px solid #e2e8f0;">
+            <div style="text-align: center;">
+              <div class="status-badge badge-active">● Active Ordained Status</div>
+              <h4 style="font-size: 1.5rem; color: var(--primary); margin-bottom: 1.5rem;">Ministry Record Found</h4>
+            </div>
+            
+            <div class="credential-details">
+              <div class="detail-row">
+                <span class="detail-label">Identification Number</span>
+                <span class="detail-value" id="displayIdNumber" style="font-weight: 700; color: var(--primary);"></span>
+              </div>
+              <div class="detail-row">
+                <span class="detail-label">Minister Name</span>
+                <span class="detail-value" id="displayFullName"></span>
+              </div>
+              <div class="detail-row">
+                <span class="detail-label">Ministry Office</span>
+                <span class="detail-value" id="displayTitle"></span>
+              </div>
+              <div class="detail-row">
+                <span class="detail-label">Issue Date</span>
+                <span class="detail-value" id="displayIssueDate"></span>
+              </div>
+              <div class="detail-row">
+                <span class="detail-label">Credential Expiration</span>
+                <span class="detail-value" style="color: #059669;">Perpetual / Active</span>
+              </div>
+              <div class="detail-row" style="align-items: center;">
+                <span class="detail-label">Exemption Filings</span>
+                <span class="detail-value" style="display: inline-flex; align-items: center; gap: 6px; color: #000000; font-weight: 600;">
+                  <span style="display: inline-flex; align-items: center; justify-content: center; width: 16px; height: 16px; border: 2px solid #000000; border-radius: 3px; background: transparent; color: #ef4444; line-height: 1;">
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                  </span>
+                  Vaccine Religious Exemption on File
+                </span>
+              </div>
+            </div>
+
+            <div id="displayLegalization" class="legalization-box"></div>
+
+            <div class="card-preview-wrapper">
+              <span style="font-family: 'Outfit', sans-serif; font-weight: 600; font-size: 0.95rem; color: var(--primary); margin-bottom: 0.5rem;">Official Credentials Identification Card</span>
+              <img id="credentialCard" src="" alt="Ministry Credentials Card">
+            </div>            <div class="btn-action-group" style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-top: 1.5rem;">
+              <button onclick="window.print()" class="btn btn-primary btn-action" style="cursor: pointer; display: inline-flex; align-items: center; gap: 8px; font-weight: 700;">
+                🖨️ Print Credential Certificate
+              </button>
+              
+            </div>
+          </div>
+
+          <!-- Failure State -->
+          <div id="failureResult" class="result-card" style="background-color: #fffafb; border: 1px solid #fecaca; text-align: center;">
+            <div class="status-badge badge-notfound">● Not Found</div>
+            <h4 style="font-size: 1.5rem; color: #991b1b; margin-bottom: 1rem;">Verification Failed</h4>
+            <p style="color: var(--text-light); max-width: 500px; margin: 0 auto; line-height: 1.6;">
+              No active credential record matching the provided Name and Identification Number was found in the Ministry Registry.
+            </p>
+          </div>
+
+          <!-- Revoked / Deactivated Key State -->
+          <div id="revokedResult" class="result-card" style="background-color: #fef2f2; border: 2px solid #ef4444; text-align: center;">
+            <div class="status-badge" style="background-color: #fee2e2; color: #dc2626; border: 1px solid #fca5a5;">⛔ Key Deactivated / Revoked</div>
+            <h4 style="font-size: 1.5rem; color: #991b1b; margin-bottom: 0.8rem;">Cryptographic Key Revoked</h4>
+            <p style="color: #7f1d1d; max-width: 600px; margin: 0 auto 1.5rem; line-height: 1.6; font-weight: 500;">
+              This cryptographic signature has been officially revoked and deactivated by the Head of Mission. It is no longer valid for member verification or diplomatic authorization.
+            </p>
+            <div class="credential-details" style="border-top-color: #fca5a5; text-align: left; max-width: 550px; margin: 0 auto 1rem;">
+              <div class="detail-row" style="border-bottom-color: #fee2e2;">
+                <span class="detail-label">Username / House</span>
+                <span class="detail-value" id="revokedUsername" style="color: #dc2626; font-weight: 700;"></span>
+              </div>
+              <div class="detail-row" style="border-bottom-color: #fee2e2;">
+                <span class="detail-label">Cryptographic Signature</span>
+                <span class="detail-value" id="revokedSignature" style="color: #dc2626; font-family: monospace; font-size: 1rem; font-weight: 700;"></span>
+              </div>
+              <div class="detail-row" style="border-bottom-color: #fee2e2;">
+                <span class="detail-label">Registry Status</span>
+                <span class="detail-value" style="color: #dc2626; font-weight: 800;">DEACTIVATED & TERMINATED</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+      <!-- Printable Certificate Only (Hidden on Screen) -->
+  <div id="printableCertificate" class="print-only-cert">
+    <div class="cert-border">
+      <div class="corner-sq csq-tl"></div>
+      <div class="corner-sq csq-tr"></div>
+      <div class="corner-sq csq-bl"></div>
+      <div class="corner-sq csq-br"></div>
+
+      <!-- Header -->
+      <div class="cert-header">
+        <img src="mission_house_logo.png" class="cert-seal-top" alt="Mission House Seal">
+        <h1 class="cert-title-main">MISSION HOUSE</h1>
+        <h2 class="cert-title-sub">OFFICIAL ATTESTATION OF ORDINATION</h2>
+      </div>
+
+      <div class="cert-body">
+        <!-- Preamble -->
+        <p class="cert-attestation-text">
+          Mission House hereby certifies that the ministry credentials presented herein were validly issued to the named ordained minister. This record is active, verified, and attested to under the full faith and affirmation of Mission House.
+        </p>
+
+        <!-- Metadata Grid -->
+        <div class="cert-meta-grid">
+          <div class="cert-meta-item">
+            <span class="cert-meta-label">Minister of the Gospel</span>
+            <span class="cert-meta-val" id="certMinisterName"></span>
+          </div>
+          <div class="cert-meta-item">
+            <span class="cert-meta-label">Office &amp; Calling</span>
+            <span class="cert-meta-val" id="certMinistryOffice"></span>
+          </div>
+          <div class="cert-meta-item">
+            <span class="cert-meta-label">Date of Issuance</span>
+            <span class="cert-meta-val" id="certIssueDate"></span>
+          </div>
+          <div class="cert-meta-item">
+            <span class="cert-meta-label">Registry Status</span>
+            <span class="cert-meta-val" style="color: #059669;">Active / Perpetual</span>
+          </div>
+        </div>
+
+        <!-- Vaccine Religious Exemption Pill -->
+        <div class="exemption-pill">
+          <span>☑</span>
+          <span>Vaccine Religious Exemption on File</span>
+        </div>
+
+        <!-- Legalization Box -->
+        <div class="cert-legalization-wrapper">
+          <div class="cert-legalization-title">Legalization &amp; Apostille Attestation</div>
+          <p class="cert-legalization-text" id="certLegalization"></p>
+        </div>
+
+        <!-- Large ID Card Badge (3.85" x 2.45") -->
+        <div class="cert-id-card-section">
+          <div class="cert-id-card-title">Credentials Identification Reference</div>
+          <img id="certCardImg" src="" alt="Credentials Card">
+        </div>
+
+        <!-- Master Dual-Column Footer -->
+        <div class="cert-footer-master">
+          <div class="footer-columns-row">
+            <div class="footer-col left">
+              <span class="footer-label">Verification Authority</span>
+              <span class="footer-main-val">Mission House Official Registry</span>
+              <span class="footer-sub-val">Anchor Block: <strong id="certBlockHeight"></strong> &bull; Verification Date: <strong id="certVerifyDate"></strong></span>
+            </div>
+            
+            <img src="mission_house_logo.png" class="footer-center-seal" alt="Center Seal">
+
+            <div class="footer-col right">
+              <span class="footer-label">Secure Verification Registry Hash</span>
+              <span class="footer-main-val" id="certVerifyTimestamp"></span>
+              <span class="footer-sub-val">Status: <strong style="color: #059669;">Attested &amp; Verified</strong></span>
+            </div>
+          </div>
+
+          <!-- Embedded Cryptographic Merkle Data (2 Stacked Rows) -->
+          <div class="footer-crypto-bar">
+            <div class="crypto-row">
+              <span class="crypto-tag">Merkle Root:</span>
+              <span class="crypto-hex" id="certMerkleRoot"></span>
+            </div>
+            <div class="crypto-row">
+              <span class="crypto-tag">Leaf Hash:&nbsp;&nbsp;</span>
+              <span class="crypto-hex" id="certLeafHash"></span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+      </div>
+    </div>
+  </div>
+    </div>
+  </div>
+
+    <!-- Footer -->
+  <footer class="site-footer">
+    <div class="footer-container">
+      <a href="https://mission-house.org" target="_blank" class="founding-badge">
+        <img src="images/mission_house_logo.png" alt="Mission House Logo" onerror="this.src='mission_house_logo.png'">
+        <span class="footer-member-text">Member of Mission House</span>
+      </a>
+
+      <ul class="footer-nav">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="about.html">About Us</a></li>
+        <li><a href="contact.html">Contact Us</a></li>
+        <li><a href="credentials.html">Credentials</a></li>
+      </ul>
+
+      <div class="footer-meta">
+        Mission Post: New York State without the district<br>
+        &copy; 2026 House of Strauss. All sacred rights reserved in propria persona.<br>
+        Ecclesiastical sanctuary and private ministry under Divine Law.
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    const database = [
+      {
+            "fullName": "jeffrey allan brode",
+            "cleanName": "jeffrey brode",
+            "displayId": "22-12719 / 24-16616",
+            "ids": [
+                  "1811570",
+                  "22-12719",
+                  "2416616",
+                  "24-16616",
+                  "24-16616-jab",
+                  "2416616jab",
+                  "22-12719-jab",
+                  "1811570jab",
+                  "0x43b2f567406a090408ca422f9547cb0ce4ba4b6d"
+            ],
+            "title": "Head of Mission & Presiding Minister",
+            "issueDate": "November 18, 2024",
+            "image": "seals/jeffrey_mh_credential.png",
+            "anchorBlock": "#870,530",
+            "leafHash": "0x84d1421f2ef2cfbf2f91eb2a061456a0eb3dfaa56b14f85e49bc337ec71e62aa",
+            "merkleRoot": "0x5824c9eb55b0a793a388f615f5c35b8ea79d20c5f21226068222fa15918eeffc",
+            "legalization": "<strong>Legalization and Apostille:</strong> The Presiding Minister, <strong>jeffrey allan brode</strong>, through his founding member House of Brode, is an active minister in good standing with our Mission. These credentials were established on November 18, 2024 and thereafter duly legalized with the district court of Den Haag under Apostille Number 22-12719 / 24-16616."
+      },
+      {
+            "fullName": "karen louise brode",
+            "cleanName": "karen brode",
+            "displayId": "22-12719-KLB",
+            "ids": [
+                  "1811570klb",
+                  "22-12719-klb",
+                  "1811570-klb"
+            ],
+            "title": "Founding Minister",
+            "issueDate": "November 18, 2024",
+            "image": "seals/karen_mh_credential.png",
+            "anchorBlock": "#870,530",
+            "leafHash": "0xd61f9df7643b44b82d49e173be2ad7562ad89ba943a416ad8043685f0db004f2",
+            "merkleRoot": "0x718a3854a88f7004f5e7178cbe4f8e564d68fb90731a54b38d38e07873ff111a",
+            "legalization": "<strong>Legalization and Apostille:</strong> The Founding Minister, <strong>karen louise brode</strong>, through her founding member House of Brode, is an active minister in good standing with our Mission. These credentials were established on November 18, 2024 and thereafter duly legalized with the district court of Den Haag under Apostille Number 22-12719."
+      },
+      {
+            "fullName": "avery marie brode",
+            "cleanName": "avery brode",
+            "displayId": "24-16616-AMB",
+            "ids": [
+                  "2416616amb",
+                  "24-16616-amb",
+                  "2416616-amb",
+                  "24-16616",
+                  "2416616"
+            ],
+            "title": "Ordained Minister",
+            "issueDate": "November 18, 2024",
+            "image": "seals/avery_mh_credential.png",
+            "anchorBlock": "#870,530",
+            "leafHash": "0x35ef00a98ab4b52fe3b64bcbb940b12bc1bb2aa94a7337da376a2608404b86eb",
+            "merkleRoot": "0xb17d12f107f9c2d15be8703a58e6ba2df78593cc188b48ba0ebfeaa9183dc21e",
+            "legalization": "<strong>Legalization and Apostille:</strong> The Ordained Minister, <strong>avery marie brode</strong>, through her founding member House of Brode, is an active minister in good standing with our Mission. These credentials were established on November 18, 2024 and thereafter duly legalized with the district court of Den Haag under Apostille Number 24-16616."
+      },
+      {
+            "fullName": "joshua allan brode",
+            "cleanName": "joshua brode",
+            "displayId": "24-16616-JSB",
+            "ids": [
+                  "2416616jsb",
+                  "24-16616-jsb",
+                  "2416616-jsb",
+                  "24-16616",
+                  "2416616"
+            ],
+            "title": "Ordained Minister",
+            "issueDate": "November 18, 2024",
+            "image": "seals/joshua_mh_credential.png",
+            "anchorBlock": "#870,530",
+            "leafHash": "0x6960b7fc80fbff25816999a4c58f00a5a3a22dc3ca14a0988cc2e1dbbb2b683e",
+            "merkleRoot": "0x56a47a16f9fcfcf8aefc5f0a204aa76be2d6a5037d4f9bcf01a1c97a4eb181e1",
+            "legalization": "<strong>Legalization and Apostille:</strong> The Ordained Minister, <strong>joshua allan brode</strong>, through his founding member House of Brode, is an active minister in good standing with our Mission. These credentials were established on November 18, 2024 and thereafter duly legalized with the district court of Den Haag under Apostille Number 24-16616."
+      },
+      {
+            "fullName": "joshua kelley grapevine",
+            "cleanName": "joshua grapevine",
+            "displayId": "24-16616-JKG",
+            "ids": [
+                  "2416616jkg",
+                  "24-16616-jkg",
+                  "2416616-jkg",
+                  "24-16616",
+                  "2416616"
+            ],
+            "title": "Ordained Minister",
+            "issueDate": "November 18, 2024",
+            "image": "seals/joshua_g_mh_credential.png",
+            "anchorBlock": "#870,530",
+            "leafHash": "0xd32a76f28b4c520ef60b37ab7c6d66e7ea81b67cc11b93f18eec26047ba3568a",
+            "merkleRoot": "0xaa42cf28d7ec6beea3d6fcf4a30ff7d206f4702b88eb3a69a03cf6551b9e6ff6",
+            "legalization": "<strong>Legalization and Apostille:</strong> The Ordained Minister, <strong>joshua kelley grapevine</strong>, through his founding member House of Brode, is an active minister in good standing with our Mission. These credentials were established on November 18, 2024 and thereafter duly legalized with the district court of Den Haag under Apostille Number 24-16616."
+      },
+      {
+            "fullName": "jeffrey pierce portela",
+            "cleanName": "jeffrey portela",
+            "displayId": "22-12719",
+            "ids": [
+                  "1811570jpt",
+                  "22-12719-jpt",
+                  "1811570-jpt",
+                  "22-12719",
+                  "1811570"
+            ],
+            "title": "Ordained Minister",
+            "issueDate": "November 18, 2024",
+            "image": "seals/jeffrey_portela_mh_credential.png",
+            "anchorBlock": "#870,530",
+            "leafHash": "0xbfa54f738e4a9ce86cb9dd1068fa0dfc10fb63f25c7e09968436ba4e738ff842",
+            "merkleRoot": "0x48aa9c47de8b9e623dbdfec1c46ee094628f80436d5e0a0a552bf73151ebce62",
+            "legalization": "<strong>Legalization and Apostille:</strong> The Ordained Minister, <strong>jeffrey pierce portela</strong>, through his founding member House of Portela, is an active minister in good standing with our Mission. These credentials were established on November 18, 2024 and thereafter duly legalized with the district court of Den Haag under Apostille Number 22-12719."
+      },
+      {
+            "fullName": "courtney coombs portela",
+            "cleanName": "courtney portela",
+            "displayId": "22-12719-CCT",
+            "ids": [
+                  "1811570cct",
+                  "22-12719-cct",
+                  "1811570-cct",
+                  "22-12719",
+                  "1811570"
+            ],
+            "title": "Ordained Minister",
+            "issueDate": "November 18, 2024",
+            "image": "seals/courtney_portela_mh_credential.png",
+            "anchorBlock": "#870,530",
+            "leafHash": "0x95d6768393e144a10ee9d34346eb4a053c8ea355fc2cbaaebe9da9bcf82c81d3",
+            "merkleRoot": "0x9b320fa168912239f1c7d2c3e1e83f3e99c15903b8cc78bf8700ea12df6abff8",
+            "legalization": "<strong>Legalization and Apostille:</strong> The Ordained Minister, <strong>courtney coombs portela</strong>, through her founding member House of Portela, is an active minister in good standing with our Mission. These credentials were established on November 18, 2024 and thereafter duly legalized with the district court of Den Haag under Apostille Number 22-12719."
+      },
+      {
+            "fullName": "courtney coombs",
+            "cleanName": "courtney coombs",
+            "displayId": "22-12719-CC",
+            "ids": [
+                  "1811570cc",
+                  "22-12719-cc",
+                  "1811570-cc",
+                  "22-12719",
+                  "1811570"
+            ],
+            "title": "Ordained Minister",
+            "issueDate": "November 18, 2024",
+            "image": "seals/courtney_coombs_mh_credential.png",
+            "anchorBlock": "#870,530",
+            "leafHash": "0x71e62aa84d1421f2ef2cfbf2f91eb2a061456a0eb3dfaa56b14f85e49bc337ec",
+            "merkleRoot": "0x15918eeffc5824c9eb55b0a793a388f615f5c35b8ea79d20c5f21226068222fa",
+            "legalization": "<strong>Legalization and Apostille:</strong> The Ordained Minister, <strong>courtney coombs</strong>, through her founding member House of Portela, is an active minister in good standing with our Mission. These credentials were established on November 18, 2024 and thereafter duly legalized with the district court of Den Haag under Apostille Number 22-12719."
+      },
+      {
+            "fullName": "olivia rollins portela",
+            "cleanName": "olivia portela",
+            "displayId": "22-12719-ORT",
+            "ids": [
+                  "1811570ort",
+                  "22-12719-ort",
+                  "1811570-ort",
+                  "22-12719",
+                  "1811570"
+            ],
+            "title": "Ordained Minister",
+            "issueDate": "November 18, 2024",
+            "image": "seals/olivia_portela_mh_credential.png",
+            "anchorBlock": "#870,530",
+            "leafHash": "0x5824c9eb55b0a793a388f615f5c35b8ea79d20c5f21226068222fa15918eeffc",
+            "merkleRoot": "0x84d1421f2ef2cfbf2f91eb2a061456a0eb3dfaa56b14f85e49bc337ec71e62aa",
+            "legalization": "<strong>Legalization and Apostille:</strong> The Ordained Minister, <strong>olivia rollins portela</strong>, through her founding member House of Portela, is an active minister in good standing with our Mission. These credentials were established on November 18, 2024 and thereafter duly legalized with the district court of Den Haag under Apostille Number 22-12719."
+      },
+      {
+            "fullName": "india pierce portela",
+            "cleanName": "india portela",
+            "displayId": "22-12719-IPT",
+            "ids": [
+                  "1811570ipt",
+                  "22-12719-ipt",
+                  "1811570-ipt",
+                  "22-12719",
+                  "1811570"
+            ],
+            "title": "Ordained Minister",
+            "issueDate": "November 18, 2024",
+            "image": "seals/india_portela_mh_credential.png",
+            "anchorBlock": "#870,530",
+            "leafHash": "0x3dfaa56b14f85e49bc337ec71e62aa84d1421f2ef2cfbf2f91eb2a061456a0eb",
+            "merkleRoot": "0xa79d20c5f21226068222fa15918eeffc5824c9eb55b0a793a388f615f5c35b8e",
+            "legalization": "<strong>Legalization and Apostille:</strong> The Ordained Minister, <strong>india pierce portela</strong>, through her founding member House of Portela, is an active minister in good standing with our Mission. These credentials were established on November 18, 2024 and thereafter duly legalized with the district court of Den Haag under Apostille Number 22-12719."
+      },
+      {
+            "fullName": "house of portela",
+            "cleanName": "house of portela",
+            "displayId": "MH-TLND-99XQ-77VT",
+            "ids": [
+                  "mh-tlnd-99xq-77vt",
+                  "tlnd99xq77vt",
+                  "houseofportela",
+                  "house of portela"
+            ],
+            "title": "Founding Member House",
+            "issueDate": "November 18, 2024",
+            "image": "seals/jeffrey_portela_mh_credential.png",
+            "anchorBlock": "#870,530",
+            "leafHash": "0x6b14f85e49bc337ec71e62aa84d1421f2ef2cfbf2f91eb2a061456a0eb3dfaa5",
+            "merkleRoot": "0x20c5f21226068222fa15918eeffc5824c9eb55b0a793a388f615f5c35b8ea79d",
+            "legalization": "<strong>Cryptographic Signature & Legalization:</strong> House of Portela holds an Active Cryptographic Signature (MH-TLND-99XQ-77VT) duly authorized and legalized with the District Court of Den Haag under Apostille Number 22-12719."
+      },
+      {
+            "fullName": "dale forest miller",
+            "cleanName": "dale miller",
+            "displayId": "24-0754",
+            "ids": [
+                  "240754",
+                  "24-0754",
+                  "24-0754-dfm",
+                  "240754dfm",
+                  "240754-dfm"
+            ],
+            "title": "Ordained Minister",
+            "issueDate": "November 18, 2024",
+            "image": "seals/dale_mh_credential.png",
+            "anchorBlock": "#870,530",
+            "leafHash": "0xa1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2",
+            "merkleRoot": "0xf0e9d8c7b6a5f4e3d2c1b0a9f8e7d6c5b4a3f2e1d0c9b8a7f6e5d4c3b2a1f0e9",
+            "legalization": "<strong>Legalization and Apostille:</strong> The Ordained Minister, <strong>dale forest miller</strong>, through his founding member House of Miller, is an active minister in good standing with our Mission. These credentials were established on November 18, 2024 and thereafter duly legalized with the district court of Den Haag under Apostille Number 24-0754."
+      },
+      {
+            "fullName": "andrew scott wallace",
+            "cleanName": "andrew wallace",
+            "displayId": "23-1730",
+            "ids": [
+                  "231730",
+                  "23-1730",
+                  "23-1730-asw",
+                  "231730asw",
+                  "231730-asw"
+            ],
+            "title": "Ordained Minister",
+            "issueDate": "November 18, 2024",
+            "image": "seals/andrew_mh_credential.png",
+            "anchorBlock": "#870,530",
+            "leafHash": "0x8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b",
+            "merkleRoot": "0xc5b4a3f2e1d0c9b8a7f6e5d4c3b2a1f0e9f0e9d8c7b6a5f4e3d2c1b0a9f8e7d6",
+            "legalization": "<strong>Legalization and Apostille:</strong> The Ordained Minister, <strong>andrew scott wallace</strong>, through his founding member House of Wallace, is an active minister in good standing with our Mission. These credentials were established on November 18, 2024 and thereafter duly legalized with the district court of Den Haag under Apostille Number 23-1730."
+      },
+      {
+            "fullName": "timothy kenneth fisher",
+            "cleanName": "timothy fisher",
+            "displayId": "26-04114",
+            "ids": [
+                  "2604114",
+                  "26-04114",
+                  "26-04114-tkf",
+                  "2604114tkf",
+                  "2604114-tkf"
+            ],
+            "title": "Ordained Minister",
+            "issueDate": "November 18, 2024",
+            "image": "seals/timothy_mh_credential.png",
+            "anchorBlock": "#870,530",
+            "leafHash": "0xd073802067e393970ff242f5b840bcb8565865112d8fdfa0cd34e35920e4f3dc",
+            "merkleRoot": "0x682ed227245886a77f0641c434293b6d3a2266de2521ece71d8c03659abede35",
+            "legalization": "<strong>Legalization and Apostille:</strong> The Ordained Minister, <strong>timothy kenneth fisher</strong>, through his founding member House of Strauss, is an active minister in good standing with our Mission. These credentials were established on November 18, 2024 and thereafter duly legalized with the district court of Den Haag under Apostille Number 26-04114."
+      },
+      {
+            "fullName": "janney korinn jaxen",
+            "cleanName": "janney jaxen",
+            "displayId": "25-4787-JKJ",
+            "ids": [
+                  "254787jkj",
+                  "25-4787-jkj",
+                  "254787-jkj",
+            ],
+            "title": "Ordained Minister",
+            "issueDate": "November 18, 2024",
+            "image": "seals/janney_mh_credential.png",
+            "anchorBlock": "#870,530",
+            "leafHash": "0x99c6c3ce153eafb5d54cc4f96a48a3fe0df15beac65bc7604df9ab5384da4a72",
+            "merkleRoot": "0x112f8fe3ff91dd5a63a9390a564cd4d4ea441526cae652591645d0e2040fcd2f",
+            "legalization": "<strong>Legalization and Apostille:</strong> The Ordained Minister, <strong>janney korinn jaxen</strong>, through her founding member House of Jaxen, is an active minister in good standing with our Mission. These credentials were established on November 18, 2024 and thereafter duly legalized with the district court of Den Haag under Apostille Number 25-4787."
+      },
+      {
+            "fullName": "coll bonn jaxen",
+            "cleanName": "coll jaxen",
+            "displayId": "25-4787",
+            "ids": [
+                  "254787cbj",
+                  "25-4787-cbj",
+                  "254787-cbj",
+                  "25-4787",
+                  "254787"
+            ],
+            "title": "Ordained Minister",
+            "issueDate": "November 18, 2024",
+            "image": "seals/coll_mh_credential.png",
+            "anchorBlock": "#870,530",
+            "leafHash": "0x07f10db4cccc77d15ea78ff05f0ecdc3dd9b7fc3db5a8f9b3894ed70d1b387d4",
+            "merkleRoot": "0xe964dc6d364950a80cf109f1abd33f2717e3f6ad851fdb2dd7d58ddace44415f",
+            "legalization": "<strong>Legalization and Apostille:</strong> The Ordained Minister, <strong>coll bonn jaxen</strong>, through his founding member House of Jaxen, is an active minister in good standing with our Mission. These credentials were established on November 18, 2024 and thereafter duly legalized with the district court of Den Haag under Apostille Number 25-4787."
+      },
+      {
+            "fullName": "tanya lynn daniels",
+            "cleanName": "tanya daniels",
+            "displayId": "23-7526",
+            "ids": [
+                  "237526",
+                  "23-7526",
+                  "23-7526-tld",
+                  "237526tld",
+                  "237526-tld"
+            ],
+            "title": "Ordained Minister",
+            "issueDate": "November 18, 2024",
+            "image": "seals/tanya_mh_credential.png",
+            "anchorBlock": "#870,530",
+            "leafHash": "0x8cb61b39e48c405bcf7ffc20bde9b82f2b096ff54ecf3dcf7b07dd8c4a74c8c1",
+            "merkleRoot": "0x5d547d048332a3f339de6e53075665777a1848f8a286d7c13b31b82ee48fad64",
+            "legalization": "<strong>Legalization and Apostille:</strong> The Ordained Minister, <strong>tanya lynn daniels</strong>, through her founding member House of Daniels, is an active minister in good standing with our Mission. These credentials were established on November 18, 2024 and thereafter duly legalized with the district court of Den Haag under Apostille Number 23-7526."
+      },
+      {
+            "fullName": "jason moore lee",
+            "cleanName": "jason lee",
+            "displayId": "24-16611",
+            "ids": [
+                  "2416611",
+                  "24-16611",
+                  "24-16611-jml",
+                  "2416611jml",
+                  "2416611-jml"
+            ],
+            "title": "Ordained Minister",
+            "issueDate": "November 18, 2024",
+            "image": "seals/jason_mh_credential.png",
+            "anchorBlock": "#870,530",
+            "leafHash": "0x71e62aa84d1421f2ef2cfbf2f91eb2a061456a0eb3dfaa56b14f85e49bc337ec",
+            "merkleRoot": "0x15918eeffc5824c9eb55b0a793a388f615f5c35b8ea79d20c5f21226068222fa",
+            "legalization": "<strong>Legalization and Apostille:</strong> The Ordained Minister, <strong>jason moore lee</strong>, through his founding member House of Lee, is an active minister in good standing with our Mission. These credentials were established on November 18, 2024 and thereafter duly legalized with the district court of Den Haag under Apostille Number 24-16611."
+      },
+      {
+            "fullName": "lisa ann patarias-huck",
+            "cleanName": "lisa patarias-huck",
+            "displayId": "24-16610",
+            "ids": [
+                  "2416610",
+                  "24-16610",
+                  "24-16610-laph",
+                  "2416610laph",
+                  "2416610-laph"
+            ],
+            "title": "Ordained Minister",
+            "issueDate": "November 18, 2024",
+            "image": "seals/lisa_mh_credential.png",
+            "anchorBlock": "#870,530",
+            "leafHash": "0xdc7b5ce766b28be055133b3cf5a8c8e33ffcb6d8070d455f12676c94d677d1f7",
+            "merkleRoot": "0xe79ea1ed712f6d2ac71fe013fb60e4c02546ad3789a9023c198c48f5ebea3adc",
+            "legalization": "<strong>Legalization and Apostille:</strong> The Ordained Minister, <strong>lisa ann patarias-huck</strong>, through her founding member House of Patarias-Huck, is an active minister in good standing with our Mission. These credentials were established on November 18, 2024 and thereafter duly legalized with the district court of Den Haag under Apostille Number 24-16610."
+      },
+      {
+            "fullName": "laura elisabeth cunningham",
+            "cleanName": "laura cunningham",
+            "displayId": "26-8643",
+            "ids": [
+                  "268643",
+                  "26-8643",
+                  "26-8643-lec",
+                  "268643lec",
+                  "268643-lec"
+            ],
+            "title": "Ordained Minister",
+            "issueDate": "November 18, 2024",
+            "image": "seals/laura_mh_credential.png",
+            "anchorBlock": "#870,530",
+            "leafHash": "0x8a7b6c5d4e3f2a1b0c9d8e7f6a5b4c3d2e1f0a9b8c7d6e5f4a3b2c1d0e9f8a7b",
+            "merkleRoot": "0x1f0e9d8c7b6a5f4e3d2c1b0a9f8e7d6c5b4a3f2e1d0c9b8a7f6e5d4c3b2a1f0e",
+            "legalization": "<strong>Legalization and Apostille:</strong> The Ordained Minister, <strong>laura elisabeth cunningham</strong>, through her founding member House of Cunningham, is an active minister in good standing with our Mission. These credentials were established on November 18, 2024 and thereafter duly legalized with the district court of Den Haag under Apostille Number 26-8643."
+      },
+      {
+            "fullName": "melissa ann nicolaou",
+            "cleanName": "melissa nicolaou",
+            "displayId": "24-16612",
+            "ids": [
+                  "2416612",
+                  "24-16612",
+                  "24-16612-man",
+                  "2416612man",
+                  "2416612-man"
+            ],
+            "title": "Ordained Minister",
+            "issueDate": "November 18, 2024",
+            "image": "seals/melissa_mh_credential.png",
+            "anchorBlock": "#870,530",
+            "leafHash": "0x9b8a7f6e5d4c3b2a1f0e9f0e9d8c7b6a5f4e3d2c1b0a9f8e7d6c5b4a3f2e1d0c",
+            "merkleRoot": "0x2e3f4a5b6c7d8e9f0a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f",
+            "legalization": "<strong>Legalization and Apostille:</strong> The Ordained Minister, <strong>melissa ann nicolaou</strong>, through her founding member House of Nicolaou, is an active minister in good standing with our Mission. These credentials were established on November 18, 2024 and thereafter duly legalized with the district court of Den Haag under Apostille Number 24-16612."
+      },
+      {
+            "fullName": "michael edward dinkins",
+            "cleanName": "michael dinkins",
+            "displayId": "23-5352",
+            "ids": [
+                  "235352",
+                  "23-5352",
+                  "23-5352-med",
+                  "235352med",
+                  "235352-med"
+            ],
+            "title": "Ordained Minister",
+            "issueDate": "November 18, 2024",
+            "image": "seals/michael_mh_credential.png",
+            "anchorBlock": "#870,530",
+            "leafHash": "0x447ef7d5a0387b8c6fd8e54605749af26659cddc76369a33cc0ce770e05904ce",
+            "merkleRoot": "0x6c7d74cdab83f6338fb67c2fb268367417d9c09ad529889537be46e0b5cf3539",
+            "legalization": "<strong>Legalization and Apostille:</strong> The Ordained Minister, <strong>michael edward dinkins</strong>, through his founding member House of Dinkins, is an active minister in good standing with our Mission. These credentials were established on November 18, 2024 and thereafter duly legalized with the district court of Den Haag under Apostille Number 23-5352."
+      },
+      {
+            "fullName": "ricardo emilio portela",
+            "cleanName": "ricardo portela",
+            "displayId": "22-12719",
+            "ids": [
+                  "2212719",
+                  "22-12719",
+                  "22-12719-rep",
+                  "2212719rep",
+                  "2212719-rep",
+                  "2416616rg",
+                  "24-16616-rg",
+                  "2416616-rg"
+            ],
+            "title": "Ordained Minister",
+            "issueDate": "November 18, 2024",
+            "image": "seals/Ricardo_mh.png",
+            "anchorBlock": "#870,530",
+            "leafHash": "0x96be144fd02eedd843350f53f3f5ec81235a138f9cc4a450889cb9d2390dd69c",
+            "merkleRoot": "0xeb6f7cc5ba76aa0f1997f1c9c7876f3d31051c9aba24415592413f3e9e0dea57",
+            "legalization": "<strong>Legalization and Apostille:</strong> The Ordained Minister, <strong>ricardo emilio portela</strong>, through his founding member House of Portela, is an active minister in good standing with our Mission. These credentials were established on November 18, 2024 and thereafter duly legalized with the district court of Den Haag under Apostille Number 22-12719."
+      },
+      {
+            "fullName": "house of patarias",
+            "cleanName": "house of patarias",
+            "displayId": "MH-PTRS-88ZK-44PL",
+            "ids": [
+                  "mh-ptrs-88zk-44pl",
+                  "ptrs88zk44pl",
+                  "houseofpatarias",
+                  "house of patarias"
+            ],
+            "title": "Founding Member House",
+            "issueDate": "November 18, 2024",
+            "image": "seals/lisa_mh_credential.png",
+            "anchorBlock": "#870,530",
+            "leafHash": "0xdc7b5ce766b28be055133b3cf5a8c8e33ffcb6d8070d455f12676c94d677d1f7",
+            "merkleRoot": "0xe79ea1ed712f6d2ac71fe013fb60e4c02546ad3789a9023c198c48f5ebea3adc",
+            "legalization": "<strong>Cryptographic Signature & Legalization:</strong> House of Patarias holds an Active Cryptographic Signature (MH-PTRS-88ZK-44PL) duly authorized and legalized with the District Court of Den Haag under Apostille Number 24-16610."
+      }
+];
+
+    const revokedKeys = [];
+    let currentMatchedMember = null;
+    function openDiplomaticDossier() {
+      if (currentMatchedMember) {
+        const q = encodeURIComponent(currentMatchedMember.fullName || currentMatchedMember.displayId);
+        window.open(`dossier.html?id=${encodeURIComponent(currentMatchedMember.displayId)}&member=${q}`, '_blank');
+      } else {
+        window.open('dossier.html', '_blank');
+      }
+    }
+
+    function renderMember(matched) {
+      const resultArea = document.getElementById('resultArea');
+      const successResult = document.getElementById('successResult');
+      const failureResult = document.getElementById('failureResult');
+      const revokedResultCard = document.getElementById('revokedResult');
+
+      if (resultArea) resultArea.style.display = 'block';
+      if (failureResult) failureResult.style.display = 'none';
+      if (revokedResultCard) revokedResultCard.style.display = 'none';
+      if (successResult) successResult.style.display = 'block';
+
+      currentMatchedMember = matched;
+
+      // 1. Populate Screen View Elements
+      const displayIdEl = document.getElementById('displayIdNumber');
+      if (displayIdEl) displayIdEl.innerText = matched.displayId || (matched.ids && matched.ids[0]) || '';
+      const displayFullNameEl = document.getElementById('displayFullName');
+      if (displayFullNameEl) displayFullNameEl.innerText = matched.fullName;
+      const displayTitleEl = document.getElementById('displayTitle');
+      if (displayTitleEl) displayTitleEl.innerText = matched.title;
+      const displayIssueDateEl = document.getElementById('displayIssueDate');
+      if (displayIssueDateEl) displayIssueDateEl.innerText = matched.issueDate;
+      
+      const certBlockEl = document.getElementById('certBlockHeight');
+      if (certBlockEl) certBlockEl.innerText = matched.anchorBlock || '#870,530';
+      const certMerkleEl = document.getElementById('certMerkleRoot');
+      if (certMerkleEl) certMerkleEl.innerText = matched.merkleRoot || '0x0000...';
+      const certLeafEl = document.getElementById('certLeafHash');
+      if (certLeafEl) certLeafEl.innerText = matched.leafHash || '0x0000...';
+      
+      const cardImg = document.getElementById('credentialCard');
+      if (cardImg) cardImg.src = matched.image;
+      
+      const legBox = document.getElementById('displayLegalization');
+      if (legBox) {
+        if (matched.legalization) {
+          legBox.innerHTML = matched.legalization;
+          legBox.style.display = 'block';
+        } else {
+          legBox.style.display = 'none';
+        }
+      }
+      
+      // 2. Populate Print-Only Certificate Elements
+      const certIdEl = document.getElementById('certIdNumber');
+      if (certIdEl) certIdEl.innerText = matched.displayId || (matched.ids && matched.ids[0]) || '';
+      const certMinisterNameEl = document.getElementById('certMinisterName');
+      if (certMinisterNameEl) certMinisterNameEl.innerText = matched.fullName;
+      const certMinistryOfficeEl = document.getElementById('certMinistryOffice');
+      if (certMinistryOfficeEl) certMinistryOfficeEl.innerText = matched.title;
+      const certIssueDateEl = document.getElementById('certIssueDate');
+      if (certIssueDateEl) certIssueDateEl.innerText = matched.issueDate;
+      
+      const certCardImg = document.getElementById('certCardImg');
+      if (certCardImg) certCardImg.src = matched.image;
+      
+      const certLegBox = document.getElementById('certLegalization');
+      if (certLegBox) {
+        if (matched.legalization) {
+          certLegBox.innerHTML = matched.legalization;
+          certLegBox.style.display = 'block';
+        } else {
+          certLegBox.style.display = 'none';
+        }
+      }
+      
+      // Generate current date and timestamp
+      const now = new Date();
+      const dateOptions = { year: 'numeric', month: 'long', day: 'numeric' };
+      const certVerifyDateEl = document.getElementById('certVerifyDate');
+      if (certVerifyDateEl) certVerifyDateEl.innerText = now.toLocaleDateString('en-US', dateOptions);
+      
+      const timeStr = now.toISOString().replace('T', ' ').substring(0, 19) + ' UTC';
+      const certTimestampEl = document.getElementById('certVerifyTimestamp');
+      if (certTimestampEl) certTimestampEl.innerText = timeStr;
+
+      // Pre-populate input fields
+      const nameInput = document.getElementById('ministerName');
+      if (nameInput) nameInput.value = matched.fullName;
+      const idInput = document.getElementById('idNumber');
+      if (idInput) idInput.value = matched.displayId || (matched.ids && matched.ids[0]) || '';
+      
+      setTimeout(() => {
+        if (successResult) successResult.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }, 100);
+    }
+
+    function lookupMember(idQuery, nameQuery) {
+      const rawId = (idQuery || '').trim().toLowerCase();
+      const idClean = rawId.replace(/[^a-z0-9]/g, '');
+      const cleanDigits = rawId.replace(/[^0-9]/g, '');
+      const rawName = (nameQuery || '').trim().toLowerCase();
+
+      // 1. If both ID and Name are provided, try exact dual match first
+      if (rawId && rawName) {
+        for (const m of database) {
+          const displayClean = (m.displayId || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+          const idMatches = (
+            (m.displayId || '').toLowerCase() === rawId ||
+            displayClean === idClean ||
+            (m.ids && m.ids.some(id => id.toLowerCase() === rawId || id.toLowerCase().replace(/[^a-z0-9]/g, '') === idClean))
+          );
+          const nameMatches = (
+            m.fullName.toLowerCase().includes(rawName) ||
+            (m.cleanName && m.cleanName.toLowerCase().includes(rawName)) ||
+            rawName.includes(m.fullName.toLowerCase())
+          );
+          if (idMatches && nameMatches) return m;
+        }
+      }
+
+      // 2. Exact match on displayId
+      if (rawId) {
+        for (const m of database) {
+          const displayClean = (m.displayId || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+          if ((m.displayId || '').toLowerCase() === rawId || (displayClean && displayClean === idClean)) {
+            return m;
+          }
+        }
+        // 3. Match within ids array
+        for (const m of database) {
+          if (m.ids && m.ids.some(id => id.toLowerCase() === rawId || id.toLowerCase().replace(/[^a-z0-9]/g, '') === idClean)) {
+            return m;
+          }
+        }
+        // 4. Numeric digits match if cleanDigits >= 4
+        if (cleanDigits.length >= 4) {
+          for (const m of database) {
+            if (m.ids && m.ids.some(id => {
+              const digits = id.replace(/[^0-9]/g, '');
+              return digits.length >= 4 && digits === cleanDigits;
+            })) {
+              return m;
+            }
+          }
+        }
+      }
+
+      // 5. Match by Name alone if ID didn't match or was omitted
+      if (rawName) {
+        for (const m of database) {
+          if (m.fullName.toLowerCase().includes(rawName) ||
+              (m.cleanName && m.cleanName.toLowerCase().includes(rawName)) ||
+              rawName.includes(m.fullName.toLowerCase())) {
+            return m;
+          }
+        }
+      }
+
+      return null;
+    }
+
+    function verifyCredentials(event) {
+      if (event && event.preventDefault) event.preventDefault();
+      
+      const nameInput = (document.getElementById('ministerName')?.value || '').trim().toLowerCase();
+      const rawIdInput = (document.getElementById('idNumber')?.value || '').trim().toLowerCase();
+      
+      const resultArea = document.getElementById('resultArea');
+      const successResult = document.getElementById('successResult');
+      const failureResult = document.getElementById('failureResult');
+      const revokedResultCard = document.getElementById('revokedResult');
+      
+      if (resultArea) resultArea.style.display = 'block';
+      if (successResult) successResult.style.display = 'none';
+      if (failureResult) failureResult.style.display = 'none';
+      if (revokedResultCard) revokedResultCard.style.display = 'none';
+
+      if (!nameInput && !rawIdInput) {
+        if (failureResult) {
+          const failMsg = failureResult.querySelector('p');
+          if (failMsg) failMsg.innerText = 'Please enter a Minister Name or Identification Number to verify credentials.';
+          failureResult.style.display = 'block';
+        }
+        return;
+      }
+
+      const matched = lookupMember(rawIdInput, nameInput);
+
+      if (matched) {
+        renderMember(matched);
+      } else {
+        if (failureResult) {
+          const failMsg = failureResult.querySelector('p');
+          if (failMsg) failMsg.innerText = 'No active credential record matching the provided details was found in the Ministry Registry.';
+          failureResult.style.display = 'block';
+          setTimeout(() => {
+            failureResult.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+          }, 100);
+        }
+      }
+    }
+
+    function autoResolveFromUrl() {
+      try {
+        const search = window.location.search || '';
+        const hash = window.location.hash || '';
+        const params = new URLSearchParams(search);
+        const hashParams = new URLSearchParams(hash.startsWith('#') ? hash.substring(1) : hash);
+
+        const targetId = params.get('id') || params.get('idNumber') || params.get('number') || hashParams.get('id') || params.get('q') || '';
+        const targetName = params.get('name') || params.get('member') || params.get('minister') || hashParams.get('name') || '';
+
+        if (!targetId && !targetName) return;
+
+        const matched = lookupMember(targetId, targetName);
+        if (matched) {
+          renderMember(matched);
+        } else {
+          const resultArea = document.getElementById('resultArea');
+          const failureResult = document.getElementById('failureResult');
+          if (resultArea) resultArea.style.display = 'block';
+          if (failureResult) {
+            failureResult.style.display = 'block';
+            const failMsg = failureResult.querySelector('p');
+            if (failMsg) failMsg.innerText = `No active credential record matching "${targetId || targetName}" was found in the Ministry Registry.`;
+          }
+        }
+      } catch (err) {
+        console.error('Auto-resolve error:', err);
+      }
+    }
+
+    // Auto-resolve on load
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', autoResolveFromUrl);
+    } else {
+      autoResolveFromUrl();
+    }
+  
+  </script>
+    <!-- Footer -->
+  <footer class="site-footer">
+    <div class="footer-container">
+      <a href="https://mission-house.org" target="_blank" class="founding-badge">
+        <img src="images/mission_house_logo.png" alt="Mission House Logo" onerror="this.src='mission_house_logo.png'">
+        <span class="footer-member-text">Member of Mission House</span>
+      </a>
+
+      <ul class="footer-nav">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="about.html">About Us</a></li>
+        <li><a href="contact.html">Contact Us</a></li>
+        <li><a href="credentials.html">Credentials</a></li>
+      </ul>
+
+      <div class="footer-meta">
+        Mission Post: New York State without the district<br>
+        &copy; 2026 House of Strauss. All sacred rights reserved in propria persona.<br>
+        Ecclesiastical sanctuary and private ministry under Divine Law.
+      </div>
+    </div>
+  </footer>
+</body>
+</html>

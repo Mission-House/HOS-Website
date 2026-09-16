@@ -1,0 +1,7 @@
+RewriteEngine On
+RewriteBase /
+
+# Rewrite /verify and /credentials to verify.html
+RewriteRule ^verify/?$ verify.html [L,NC]
+RewriteRule ^credentials/?$ verify.html [L,NC]
+RewriteRule ^credentials\.html$ verify.html [L,NC]

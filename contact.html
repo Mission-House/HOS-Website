@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contact Us — House of Strauss</title>
+  <meta name="description" content="Pastoral inquiry and sanctuary communications for the House of Strauss in Scottsdale, Arizona.">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="icon" type="image/png" href="images/house_of_strauss_seal.jpg">
+  <style>
+    .contact-grid {
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 3.5rem;
+      align-items: start;
+    }
+    .form-group {
+      margin-bottom: 1.4rem;
+    }
+    .form-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 600;
+      color: var(--text-heading);
+      font-size: 0.92rem;
+    }
+    .form-group input, 
+    .form-group textarea {
+      width: 100%;
+      padding: 0.85rem 1.1rem;
+      background: #ffffff;
+      border: 1.5px solid var(--border-card);
+      border-radius: var(--radius-sm);
+      color: var(--text-main);
+      font-family: var(--font-sans);
+      font-size: 0.98rem;
+      transition: var(--transition);
+    }
+    .form-group input:focus, 
+    .form-group textarea:focus {
+      outline: none;
+      border-color: var(--accent-terracotta);
+      box-shadow: 0 0 14px rgba(194, 94, 46, 0.15);
+      background: #ffffff;
+    }
+    .form-group input::placeholder,
+    .form-group textarea::placeholder {
+      color: var(--text-light);
+    }
+    .info-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-card);
+      padding: 2.25rem;
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-sm);
+      margin-bottom: 1.75rem;
+    }
+    .info-card h3 {
+      font-size: 1.25rem;
+      color: var(--text-heading);
+      margin-bottom: 1rem;
+    }
+    .info-card p {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      line-height: 1.7;
+    }
+    @media (max-width: 860px) {
+      .contact-grid { grid-template-columns: 1fr; gap: 2.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+    <!-- Header & Navigation -->
+  <header class="site-header">
+    <div class="header-container">
+      <a href="index.html" class="brand">
+        <img src="images/house_of_strauss_seal.jpg" alt="House of Strauss Consecrated Seal" class="brand-seal">
+        <div class="brand-text">
+          <span class="brand-name">House of Strauss</span>
+          <span class="brand-subtitle">Ecclesia & Desert Sanctuary</span>
+        </div>
+      </a>
+      <nav>
+        <ul class="nav-links">
+          <li><a href="index.html" class="nav-link">Home</a></li>
+          <li><a href="about.html" class="nav-link">About Us</a></li>
+          <li><a href="contact.html" class="nav-link active">Contact Us</a></li>
+          <li><a href="credentials.html" class="nav-cta">Credentials</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Hero Header -->
+  <section class="section" style="padding: 5rem 0 3rem; background: linear-gradient(180deg, #fdfbf8 0%, #f6efe6 100%); border-bottom: 1px solid var(--border-subtle); text-align: center;">
+    <div class="container">
+      <div class="badge-tag">Pastoral Communications</div>
+      <h1 class="headline" style="font-size: 2.8rem; margin-bottom: 1rem;">Contact Our Mission</h1>
+      <p class="subhead" style="max-width: 720px; margin: 0 auto;">
+        Reach out for pastoral fellowship, theological inquiries regarding the decentralized church, or private sanctuary communications.
+      </p>
+    </div>
+  </section>
+
+  <!-- Contact Grid -->
+  <section class="section">
+    <div class="container">
+      <div class="contact-grid">
+        <!-- Form -->
+        <div class="glass-card">
+          <h2 style="font-size: 1.8rem; margin-bottom: 1.5rem;">Pastoral Inquiry Form</h2>
+          <form onsubmit="event.preventDefault(); alert('Your pastoral inquiry has been securely transmitted under ecclesiastical privilege.');">
+            <div class="form-group">
+              <label>Full Name</label>
+              <input type="text" placeholder="Enter your full name" required>
+            </div>
+
+            <div class="form-group">
+              <label>Email Address</label>
+              <input type="email" placeholder="Enter your email address" required>
+            </div>
+
+            <div class="form-group">
+              <label>Nature of Inquiry</label>
+              <input type="text" placeholder="Decentralized church fellowship, retreat inquiry, pastoral counsel..." required>
+            </div>
+
+            <div class="form-group">
+              <label>Message / Pastoral Request</label>
+              <textarea rows="5" placeholder="Share your inquiry or request in confidence..." required></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center; margin-top: 0.5rem;">
+              <span>Transmit Pastoral Inquiry</span>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+            </button>
+          </form>
+        </div>
+
+        <!-- Info Sidebar -->
+        <div>
+          <div class="info-card" style="border-left: 4px solid var(--accent-terracotta);">
+            <h3>Sanctuary Mission Post</h3>
+            <p style="margin-bottom: 0.85rem;">
+              <strong>Mission Post:</strong><br>
+              New York State without the district
+            </p>
+            <p>
+              <strong>Jurisdiction:</strong><br>
+              Ecclesiastical private sanctuary under Divine Law and international peace covenants.
+            </p>
+          </div>
+
+          <div class="info-card" style="border-left: 4px solid var(--accent-gold);">
+            <h3 style="color: var(--accent-gold);">Pastoral Confidentiality</h3>
+            <p>
+              All ministerial communications, pastoral requests, and ecclesiastical inquiries are protected under unbroken sacerdotal privilege and sacred confidence.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+    <!-- Footer -->
+  <footer class="site-footer">
+    <div class="footer-container">
+      <a href="https://mission-house.org" target="_blank" class="founding-badge">
+        <img src="images/mission_house_logo.png" alt="Mission House Logo" onerror="this.src='mission_house_logo.png'">
+        <span class="footer-member-text">Member of Mission House</span>
+      </a>
+
+      <ul class="footer-nav">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="about.html">About Us</a></li>
+        <li><a href="contact.html">Contact Us</a></li>
+        <li><a href="credentials.html">Credentials</a></li>
+      </ul>
+
+      <div class="footer-meta">
+        Mission Post: New York State without the district<br>
+        &copy; 2026 House of Strauss. All sacred rights reserved in propria persona.<br>
+        Ecclesiastical sanctuary and private ministry under Divine Law.
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>
