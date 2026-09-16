@@ -5,151 +5,138 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>About Us — House of Strauss</title>
   <meta name="description" content="Ecclesiastical charter, scriptural foundation, and micro-church ministry of the House of Strauss. Knowledge Enables Choice.">
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
-  <style>
-    .about-container {
-      margin-top: 150px;
-      margin-bottom: 4rem;
-    }
-    
-    .split-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 2rem;
-    }
-
-    @media (max-width: 768px) {
-      .split-grid {
-        grid-template-columns: 1fr;
-      }
-    }
-  </style>
+  <link rel="icon" type="image/jpeg" href="images/house_of_strauss_seal.png">
 </head>
 <body>
 
   <!-- Header & Navigation -->
-  <nav class="navbar glass">
-      <div class="nav-container">
-          <a href="index.html" class="logo-link">
-              <img src="images/logo_clean.png" alt="House of Strauss Logo" class="nav-logo">
-              <span class="nav-title">House of Strauss</span>
-          </a>
-          <div class="nav-links">
-              <a href="index.html">Home</a>
-              <a href="about.html" class="active">About Us</a>
-              <a href="credentials.html">Credentials</a>
-              <a href="index.html#privacy">Privacy</a>
-              <a href="mailto:contact@houseofstrauss.org" class="btn-primary">Contact Us</a>
-          </div>
-      </div>
-  </nav>
+  <header class="site-header">
+    <div class="header-container">
+      <a href="index.html" class="brand">
+        <img src="images/house_of_strauss_seal.png" alt="House of Strauss Consecrated Seal" class="brand-seal">
+        <div class="brand-text">
+          <span class="brand-name">House of Strauss</span>
+          <span class="brand-subtitle">Micro-Church & Family Ministry</span>
+        </div>
+      </a>
+      <nav>
+        <ul class="nav-links">
+          <li><a href="index.html" class="nav-link">Home</a></li>
+          <li><a href="about.html" class="nav-link active">About Us</a></li>
+          <li><a href="contact.html" class="nav-link">Contact Us</a></li>
+          <li><a href="credentials.html" class="nav-cta">Credentials</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
 
-  <!-- Main Content -->
-  <main class="content-sections about-container">
-    
-    <div class="glass-card fade-in-up" style="text-align: center;">
-      <h1 class="section-title" style="border:none; margin-bottom: 0;">About House of Strauss</h1>
-      <p style="color: var(--text-light); font-style: italic; margin-bottom: 1rem; max-width: 600px; margin-left: auto; margin-right: auto;">
+  <!-- Main Banner -->
+  <section class="section" style="padding: 5rem 0 3rem; background: linear-gradient(180deg, #fdfbf1 0%, #fbf5db 100%); border-bottom: 1px solid var(--border-subtle); text-align: center;">
+    <div class="container">
+      <div class="badge-tag">Ecclesiastical Charter</div>
+      <h1 class="headline" style="font-size: 2.8rem; margin-bottom: 1rem;">About House of Strauss</h1>
+      <p class="subhead" style="max-width: 760px; margin: 0 auto;">
         "Knowledge Enables Choice." A world-based micro-church facilitating conscious connection to the omnipresent Creator under the bathing light of the Father.
       </p>
     </div>
+  </section>
 
-    <!-- Detailed Mission & Purpose -->
-    <div class="glass-card reveal">
-      <h2 class="section-title">The Sanctuary of the MicroChurch & Family Ministry</h2>
-      <div class="section-content">
-        <p>
+  <!-- Detailed Mission & Purpose -->
+  <section class="section">
+    <div class="container">
+      <div class="glass-card" style="margin-bottom: 3.5rem; border-left: 4px solid var(--accent-amber);">
+        <h2 style="font-size: 2rem; margin-bottom: 1.2rem;">The Sanctuary of the MicroChurch & Family Ministry</h2>
+        <p style="color: var(--text-muted); font-size: 1.08rem; line-height: 1.85; margin-bottom: 1.5rem;">
           To all whose souls have taken form, the House of Strauss provides what the Creator has willed of us to be: a sanctuary. A place of transformation and restoration, a place of illumination under the bathing light of the one and only almighty Father.
         </p>
-        <p>
+        <p style="color: var(--text-muted); font-size: 1.08rem; line-height: 1.85; margin-bottom: 1.5rem;">
           We believe that through the power of words there can be the creation of things as the Father has done for us in Genesis 1:3: <em>"And God said, 'Let there be light,' and there was light."</em> It is the primary mission of the House of Strauss to assure that the culmination of the written remains solely for the purpose of inspiring creation from the place of intelligentsia by the sole powers of His voice.
         </p>
-        <p>
+        <p style="color: var(--text-muted); font-size: 1.08rem; line-height: 1.85;">
           We allow for a space by presence of self-realization of the Creator through the healing mechanisms of the natural world, which has always included what can and cannot be perceived—from plants to frequencies, seeable and imperceptible. We share our God-given talents and spiritual missions to aid living souls in their inward discovery toward the divinity within.
         </p>
       </div>
-    </div>
 
-    <!-- Sacred Sanctuary Showcase -->
-    <div class="glass-card reveal">
-      <h3 class="section-title" style="font-size: 1.8rem;">Healing the Senses & Awaking Truth</h3>
-      <div class="section-content">
-        <p>
-          Under Matthew 10:1: <em>"And when he had called unto him his twelve disciples, he gave them power against unclean spirits, to cast them out, and to heal all manner of sickness and all manner of disease."</em>
-        </p>
-        <p>
-          Through sound, word, vibration, and herbal stewardship, the sanctuary fosters deep biological and spiritual alignment, shedding the distortion of secular commercial environments.
-        </p>
-        <p>
-          Communicants and living families find an unshakeable ground of peace, clarity, and private association to fulfill their God-ordained purpose.
-        </p>
+      <!-- Sacred Sanctuary Showcase -->
+      <div id="sanctuary" class="split-grid" style="margin-bottom: 3.5rem;">
+        <div class="image-showcase">
+          <img src="images/hero_bg.jpg" alt="Sacred Open-Air Sanctuary Pavilion in Rolling Countryside">
+          <div class="image-overlay-card">
+            <h4 style="color: var(--text-heading); font-size: 1.05rem; margin-bottom: 0.25rem;">Sacred Open-Air Sanctuary Pavilion</h4>
+            <p style="color: var(--text-muted); font-size: 0.88rem; line-height: 1.5;">Natural stone and timber prayer sanctuary nestled amidst wild botanicals, rolling hills, and golden dawn light.</p>
+          </div>
+        </div>
+
+        <div>
+          <div class="badge-tag gold">Spiritual Frequency</div>
+          <h3 style="font-size: 1.8rem; margin-bottom: 1.2rem;">Healing the Senses & Awaking Truth</h3>
+          <p style="color: var(--text-muted); font-size: 1.05rem; line-height: 1.8; margin-bottom: 1.2rem;">
+            Under Matthew 10:1: <em>"And when he had called unto him his twelve disciples, he gave them power against unclean spirits, to cast them out, and to heal all manner of sickness and all manner of disease."</em>
+          </p>
+          <p style="color: var(--text-muted); font-size: 1.05rem; line-height: 1.8; margin-bottom: 1.2rem;">
+            Through sound, word, vibration, and herbal stewardship, the sanctuary fosters deep biological and spiritual alignment, shedding the distortion of secular commercial environments.
+          </p>
+          <p style="color: var(--text-muted); font-size: 1.05rem; line-height: 1.8;">
+            Communicants and living families find an unshakeable ground of peace, clarity, and private association to fulfill their God-ordained purpose.
+          </p>
+        </div>
       </div>
-    </div>
 
-    <!-- Ecclesiastical Covenants -->
-    <div class="glass-card reveal" style="border-left: 4px solid var(--primary-gold);">
-      <h3 style="color: var(--accent-gold); font-size: 1.6rem; margin-bottom: 1rem; font-family: 'Cinzel', serif;">Ecclesiastical Immunity & Private Association</h3>
-      <div class="section-content">
-        <p>
+      <!-- Ecclesiastical Covenants -->
+      <div id="covenants" class="glass-card" style="border-left: 4px solid var(--accent-amber); margin-bottom: 3.5rem;">
+        <h3 style="color: var(--accent-amber); font-size: 1.6rem; margin-bottom: 1rem;">Ecclesiastical Immunity & Private Association</h3>
+        <p style="color: var(--text-muted); font-size: 1.05rem; line-height: 1.8; margin-bottom: 1rem;">
           The House of Strauss operates exclusively under the ecclesiastical jurisdiction of the Mission House Ecclesia and the written divine laws of the Creator and Holy Scripture. We hold full ecclesiastical immunity and maintain private association with all communicants.
         </p>
-        <p>
-          All pastoral records, confessions, sanctuary trusts, and ministerial appointments are sacred confidences, protected under ecclesiastical privilege and divine trust.
+        <p style="color: var(--text-muted); font-size: 1.05rem; line-height: 1.8;">
+          All pastoral records, confessions, sanctuary trusts, and ministerial appointments are sacred confidences, protected under ecclesiastical privilege, divine trust, and Den Haag Apostille legalization.
         </p>
+      </div>
+
+      <!-- Scripture Grid -->
+      <div class="split-grid">
+        <div class="glass-card">
+          <h4 style="color: var(--accent-blue); font-size: 1.2rem; margin-bottom: 0.8rem;">Genesis 1:3</h4>
+          <p style="color: var(--text-muted); font-size: 1rem; line-height: 1.7;">
+            "And God said, 'Let there be light,' and there was light." Through the divine utterance of truth, reality is shaped and illuminated.
+          </p>
+        </div>
+
+        <div class="glass-card">
+          <h4 style="color: var(--accent-amber); font-size: 1.2rem; margin-bottom: 0.8rem;">Matthew 10:1</h4>
+          <p style="color: var(--text-muted); font-size: 1rem; line-height: 1.7;">
+            "He gave them power against unclean spirits, to cast them out, and to heal all manner of sickness and all manner of disease."
+          </p>
+        </div>
       </div>
     </div>
-
-    <!-- Scripture Grid -->
-    <div class="split-grid reveal">
-      <div class="glass-card" style="margin-bottom: 0;">
-        <h4 style="color: var(--accent-gold); font-size: 1.2rem; margin-bottom: 0.8rem; font-family: 'Cinzel', serif;">Genesis 1:3</h4>
-        <p style="color: #cbd5e1; font-size: 1rem; line-height: 1.7;">
-          "And God said, 'Let there be light,' and there was light." Through the divine utterance of truth, reality is shaped and illuminated.
-        </p>
-      </div>
-
-      <div class="glass-card" style="margin-bottom: 0;">
-        <h4 style="color: var(--accent-gold); font-size: 1.2rem; margin-bottom: 0.8rem; font-family: 'Cinzel', serif;">Matthew 10:1</h4>
-        <p style="color: #cbd5e1; font-size: 1rem; line-height: 1.7;">
-          "He gave them power against unclean spirits, to cast them out, and to heal all manner of sickness and all manner of disease."
-        </p>
-      </div>
-    </div>
-
-  </main>
+  </section>
 
   <!-- Footer -->
-  <footer class="footer">
-      <div class="footer-content" style="display: flex; flex-direction: column; align-items: center; gap: 1.5rem;">
-          <img src="images/logo_clean.png" alt="House of Strauss Seal" class="footer-logo">
-          
-          <a href="https://mission-house.org" target="_blank" style="display: flex; flex-direction: column; align-items: center; text-decoration: none; margin-bottom: 1rem;">
-              <img src="images/mission_house_logo.png" alt="Mission House Logo" style="max-width: 160px; height: auto; filter: grayscale(20%) sepia(20%); opacity: 0.8; transition: all 0.3s ease;" onmouseover="this.style.opacity='1'; this.style.filter='none';" onmouseout="this.style.opacity='0.8'; this.style.filter='grayscale(20%) sepia(20%)';">
-              <span style="color: var(--primary-gold); font-size: 0.85rem; font-weight: 500; font-family: 'Outfit', 'Inter', sans-serif; letter-spacing: 0.5px; text-transform: uppercase; margin-top: 0.5rem;">Member of Mission House</span>
-          </a>
+  <footer class="site-footer">
+    <div class="footer-container">
+      <a href="https://mission-house.org" target="_blank" class="footer-member-badge">
+        <div class="logo-wrap">
+          <img src="images/mission_house_logo.png" alt="Mission House Logo" onerror="this.src='mission_house_logo.png'">
+        </div>
+        <span class="footer-member-text">Member of Mission House</span>
+      </a>
 
-          <p>&copy; 2026 House of Strauss. All rights reserved. Private Spiritual Association.</p>
-          <div class="footer-links">
-              <a href="index.html#privacy">Privacy Policy</a>
-          </div>
+      <ul class="footer-nav">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="about.html">About Us</a></li>
+        <li><a href="contact.html">Contact Us</a></li>
+        <li><a href="credentials.html">Credentials</a></li>
+      </ul>
+
+      <div class="footer-meta">
+        Mission Post: New York State without the district<br>
+        &copy; 2026 House of Strauss. All sacred rights reserved in propria persona.<br>
+        World-based micro-church and sacred sanctuary under Divine Law.
       </div>
+    </div>
   </footer>
 
-  <script>
-      function reveal() {
-          var reveals = document.querySelectorAll(".reveal");
-          for (var i = 0; i < reveals.length; i++) {
-              var windowHeight = window.innerHeight;
-              var elementTop = reveals[i].getBoundingClientRect().top;
-              var elementVisible = 150;
-              if (elementTop < windowHeight - elementVisible) {
-                  reveals[i].classList.add("active");
-              }
-          }
-      }
-      window.addEventListener("scroll", reveal);
-      setTimeout(reveal, 100);
-  </script>
 </body>
 </html>
