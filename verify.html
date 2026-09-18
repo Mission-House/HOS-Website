@@ -198,13 +198,13 @@
 
     /* Print only certificate styling - Guaranteed Single Page with Standard Margins */
     @page {
-      size: portrait;
-      margin: 10mm;
+      size: letter portrait;
+      margin: 6mm 8mm;
     }
     @media print {
       @page {
-        size: portrait;
-        margin: 8mm;
+        size: letter portrait;
+        margin: 6mm 8mm;
       }
 
       *, *:before, *:after {
@@ -236,8 +236,8 @@
         visibility: visible !important;
         position: static !important;
         width: 100% !important;
-        height: 236mm !important;
-        max-height: 236mm !important;
+        height: 232mm !important;
+        max-height: 232mm !important;
         box-sizing: border-box !important;
         background: #ffffff !important;
         padding: 0 !important;
@@ -260,9 +260,9 @@
         outline: 1.5px solid #0097b2 !important;
         outline-offset: -5px !important;
         width: 100% !important;
-        height: 236mm !important;
-        max-height: 236mm !important;
-        padding: 3.5mm 8mm 2.5mm 8mm !important;
+        height: 232mm !important;
+        max-height: 232mm !important;
+        padding: 3mm 8mm 2mm 8mm !important;
         box-sizing: border-box !important;
         display: flex !important;
         flex-direction: column !important;
@@ -274,6 +274,8 @@
         print-color-adjust: exact !important;
         page-break-inside: avoid !important;
         break-inside: avoid !important;
+        page-break-after: avoid !important;
+        break-after: avoid !important;
       }
       .corner-sq {
         position: absolute;
